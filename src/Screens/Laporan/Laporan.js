@@ -1,96 +1,99 @@
-'use strict';
 import React, {Component} from 'react';
 import {
-  AppRegistry,
-  StyleSheet,
+  Alert,
+  Image,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {RNCamera} from 'react-native-camera';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import styles from './Styles';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
-const PendingView = () => (
-  <View
-    style={{
-      flex: 1,
-      backgroundColor: 'lightgreen',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}>
-    <Text>Waiting</Text>
-  </View>
-);
+class RegisterScreen extends Component {
+  constructor(props) {
+    super(props);
 
-class Laporan extends Component {
+  }
+
+
+  openCamera=()=>{
+    console.log('open camera');
+    this.props.navigation.navigate('camera')
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <RNCamera
-          style={styles.preview}
-          type={RNCamera.Constants.Type.back}
-          flashMode={RNCamera.Constants.FlashMode.on}
-          androidCameraPermissionOptions={{
-            title: 'Permission to use camera',
-            message: 'We need your permission to use your camera',
-            buttonPositive: 'Ok',
-            buttonNegative: 'Cancel',
-          }}
-          androidRecordAudioPermissionOptions={{
-            title: 'Permission to use audio recording',
-            message: 'We need your permission to use your audio',
-            buttonPositive: 'Ok',
-            buttonNegative: 'Cancel',
-          }}>
-          {({camera, status, recordAudioPermissionStatus}) => {
-            if (status !== 'READY') return <PendingView />;
-            return (
-              <View
-                style={{
-                  flex: 0,
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                }}>
-                <TouchableOpacity
-                  onPress={() => this.takePicture(camera)}
-                  style={styles.capture}>
-                  <Text style={{fontSize: 14}}> SNAP </Text>
-                </TouchableOpacity>
-              </View>
-            );
-          }}
-        </RNCamera>
+        <KeyboardAwareScrollView
+          style={{flex: 1, width: '100%'}}
+          keyboardShouldPersistTaps="always">
+          <Text style={styles.label}>Nama</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Full Name"
+            placeholderTextColor="#aaaaaa"
+            onChangeText={(name) => this.setState({name: name})}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+          <Text style={styles.label}>Kejadian</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Kejadian"
+            placeholderTextColor="#aaaaaa"
+            onChangeText={(kejadian) => this.setState({kejadian: kejadian})}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+          <Text style={styles.label}>Alamat</Text>
+          <TextInput
+            style={styles.input}
+            placeholderTextColor="#aaaaaa"
+            placeholder="alamat"
+            onChangeText={(alamat) => this.setState({alamat: alamat})}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+          <Text style={styles.label}>Keterangan</Text>
+          <TextInput
+            style={styles.input}
+            placeholderTextColor="#aaaaaa"
+            placeholder="keterangan"
+            onChangeText={(keterangan) =>
+              this.setState({keterangan: keterangan})
+            }
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+
+          <View style={styles.container}>
+            <TouchableOpacity style={styles.buttonStyle}>
+              <Image
+                style={styles.iconImage}
+                source={require('../../assets/image.png')}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.buttonStyle}>
+              <Image
+                onPress={this.openCamera}
+                style={styles.iconImage}
+                source={require('../../assets/camera.png')}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity style={styles.button}>
+            <View>
+              <Text style={styles.buttonTitle}>Laporkan</Text>
+            </View>
+          </TouchableOpacity>
+        </KeyboardAwareScrollView>
       </View>
     );
   }
-
-  takePicture = async function (camera) {
-    const options = {quality: 0.5, base64: true};
-    const data = await camera.takePictureAsync(options);
-    //  eslint-disable-next-line
-    console.log(data.uri);
-  };
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: 'black',
-  },
-  preview: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  capture: {
-    flex: 0,
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    padding: 15,
-    paddingHorizontal: 20,
-    alignSelf: 'center',
-    margin: 20,
-  },
-});
-
-export default Laporan;
+export default RegisterScreen;
